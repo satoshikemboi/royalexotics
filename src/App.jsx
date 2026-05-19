@@ -1,16 +1,24 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Home from './pages/Home';
 import Footer from './components/Footer';
+import Home from './pages/Home';
+import Booking from './pages/Booking';
 
 function App() {
   return (
-    <div className="App">
-      <Navbar />
-      <Home />
-      <Footer />
-      {/* Other components and content can go here */}
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <Navbar />
+
+        <Routes>
+          <Route path="/"        element={<Home />} />
+          <Route path="/booking" element={<Booking />} />
+        </Routes>
+
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
 
