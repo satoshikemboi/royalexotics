@@ -4,7 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Booking from './pages/Booking';
-import Payment from './components/Payment';
+import Payment from './pages/Payment';
 
 function App() {
   return (
