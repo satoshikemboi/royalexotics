@@ -1,8 +1,9 @@
 // Booking.jsx
 // Multi-step exotic car booking form
-// Dependencies: Tailwind CSS
+// Dependencies: Tailwind CSS, react-router-dom
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // ── Data ────────────────────────────────────────────────────
 const vehicles = [
@@ -25,6 +26,7 @@ const extras = [
 ];
 
 const TOTAL_STEPS = 5;
+const SECURITY_DEPOSIT = 1000;
 
 const defaultBooking = {
   address: "", city: "", state: "", zip: "",
@@ -36,9 +38,9 @@ const defaultBooking = {
 
 // ── Main Component ───────────────────────────────────────────
 export default function Booking() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [data, setData] = useState(defaultBooking);
-  const [submitted, setSubmitted] = useState(false);
 
   const update = (fields) => setData((prev) => ({ ...prev, ...fields }));
 
@@ -59,7 +61,8 @@ export default function Booking() {
   }, 0);
 
   const vehicleTotal = selectedVehicle ? selectedVehicle.price * nights : 0;
-  const grandTotal = vehicleTotal + extrasTotal;
+  const subtotal = vehicleTotal + extrasTotal;
+  const grandTotal = subtotal + SECURITY_DEPOSIT;
 
   // Step validation
   const canProceed = (() => {
@@ -69,7 +72,31 @@ export default function Booking() {
     return true;
   })();
 
-  if (submitted) return <SuccessScreen data={data} selectedVehicle={selectedVehicle} grandTotal={grandTotal} onReset={() => { setSubmitted(false); setStep(1); setData(defaultBooking); }} />;
+  const handleConfirmBooking = () => {
+    navigate("/payment", {
+      state: {
+        booking: {
+          vehicleName: selectedVehicle?.name,
+          nights,
+          vehicleTotal,
+          extrasTotal,
+          subtotal,
+          securityDeposit: SECURITY_DEPOSIT,
+          grandTotal,
+          firstName: data.firstName,
+          email: data.email,
+          address: data.address,
+          city: data.city,
+          state: data.state,
+          zip: data.zip,
+          pickupDate: data.pickupDate,
+          returnDate: data.returnDate,
+          pickupTime: data.pickupTime,
+          selectedExtras: data.extras,
+        },
+      },
+    });
+  };
 
   return (
     <section className="bg-[#080808] w-full py-20 px-4" id="booking">
@@ -106,6 +133,8 @@ export default function Booking() {
                 nights={nights}
                 vehicleTotal={vehicleTotal}
                 extrasTotal={extrasTotal}
+                securityDeposit={SECURITY_DEPOSIT}
+                subtotal={subtotal}
                 grandTotal={grandTotal}
               />
             )}
@@ -144,14 +173,14 @@ export default function Booking() {
                 </button>
               ) : (
                 <button
-                  onClick={() => setSubmitted(true)}
+                  onClick={handleConfirmBooking}
                   className="px-8 py-3 text-[0.72rem] font-bold tracking-[0.14em] uppercase text-black hover:brightness-110 hover:scale-[1.02] transition-all duration-200"
                   style={{
                     background: "#C9A84C",
                     clipPath: "polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%)",
                   }}
                 >
-                  Confirm Booking ✓
+                  Proceed to Payment ✓
                 </button>
               )}
             </div>
@@ -415,7 +444,7 @@ function Step4({ data, update }) {
 }
 
 // ── Step 5: Review & Confirm ─────────────────────────────────
-function Step5({ data, selectedVehicle, extras, nights, vehicleTotal, extrasTotal, grandTotal }) {
+function Step5({ data, selectedVehicle, extras, nights, vehicleTotal, extrasTotal, securityDeposit, subtotal, grandTotal }) {
   const selectedExtras = extras.filter((e) => data.extras.includes(e.id));
 
   return (
@@ -466,59 +495,37 @@ function Step5({ data, selectedVehicle, extras, nights, vehicleTotal, extrasTota
         </ReviewCard>
       </div>
 
-      {/* Grand Total */}
-      <div
-        className="rounded-xl px-6 py-5 flex items-center justify-between"
-        style={{ background: "linear-gradient(135deg, #1a1208, #0f0d0a)", border: "1px solid rgba(201,168,76,0.3)" }}
-      >
-        <div>
-          <p className="text-white/50 text-[0.65rem] tracking-[0.15em] uppercase font-semibold">Estimated Total</p>
-          <p className="text-white/30 text-xs mt-1">({nights} days · vehicle + add-ons)</p>
+      {/* Pricing breakdown */}
+      <div className="bg-[#141414] border border-white/8 rounded-xl p-5 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <span className="text-white/50 text-xs">Vehicle Rental</span>
+          <span className="text-white text-sm font-semibold">${vehicleTotal.toLocaleString()}</span>
         </div>
-        <div className="text-right">
-          <p
-            className="text-[#C9A84C] font-black text-4xl"
-            style={{ fontFamily: "'Bebas Neue', 'Arial Black', sans-serif" }}
-          >
+        <div className="flex items-center justify-between">
+          <span className="text-white/50 text-xs">Add-ons & Extras</span>
+          <span className="text-white text-sm font-semibold">${extrasTotal.toLocaleString()}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-white/50 text-xs">Security Deposit</span>
+          <span className="text-white text-sm font-semibold">${securityDeposit.toLocaleString()}</span>
+        </div>
+        <div className="border-t border-white/8 pt-3 flex items-center justify-between">
+          <span className="text-white/50 text-[0.65rem] tracking-[0.15em] uppercase font-semibold">Total Amount Due</span>
+          <span className="text-[#C9A84C] font-black text-2xl" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
             ${grandTotal.toLocaleString()}
-          </p>
+          </span>
+        </div>
+      </div>
+
+      {/* Security deposit note */}
+      <div className="bg-[#C9A84C]/8 border border-[#C9A84C]/20 rounded-lg px-4 py-3 flex items-start gap-3">
+        <span className="text-[#C9A84C] text-lg">ℹ️</span>
+        <div>
+          <p className="text-[#C9A84C] text-xs font-semibold">Security Deposit Included</p>
+          <p className="text-[#C9A84C]/60 text-[0.65rem] mt-1">A ${securityDeposit.toLocaleString()} security deposit is required to secure your booking. This will be held during the rental and refunded upon return of the vehicle in agreed condition.</p>
         </div>
       </div>
     </div>
-  );
-}
-
-// ── Success Screen ───────────────────────────────────────────
-function SuccessScreen({ data, selectedVehicle, grandTotal, onReset }) {
-  return (
-    <section className="bg-[#080808] w-full py-20 px-4 min-h-[60vh] flex items-center justify-center">
-      <div className="max-w-lg mx-auto text-center flex flex-col items-center gap-6">
-        <div className="w-20 h-20 rounded-full bg-[#C9A84C]/10 border border-[#C9A84C]/30 flex items-center justify-center text-4xl">
-          🏎️
-        </div>
-        <h2
-          className="text-white font-black uppercase text-4xl"
-          style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-        >
-          Booking <span className="text-[#C9A84C]">Received!</span>
-        </h2>
-        <p className="text-white/50 text-sm leading-relaxed">
-          Thank you, <span className="text-white font-semibold">{data.firstName}</span>! Your reservation request for
-          the <span className="text-[#C9A84C] font-semibold">{selectedVehicle?.name}</span> has been received.
-          A member of our team will contact you at <span className="text-white">{data.email}</span> to confirm your booking.
-        </p>
-        <div className="bg-[#141414] border border-white/8 rounded-xl px-6 py-4 w-full flex justify-between items-center">
-          <span className="text-white/40 text-xs uppercase tracking-widest">Estimated Total</span>
-          <span className="text-[#C9A84C] font-black text-2xl" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>${grandTotal.toLocaleString()}</span>
-        </div>
-        <button
-          onClick={onReset}
-          className="mt-2 text-[#C9A84C] text-[0.7rem] font-bold tracking-[0.2em] uppercase hover:underline"
-        >
-          ← Make Another Booking
-        </button>
-      </div>
-    </section>
   );
 }
 
