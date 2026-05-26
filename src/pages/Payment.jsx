@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import CardForm from "../components/payment/CardForm";
 import CryptoForm from "../components/payment/CryptoForm";
-import { BankForm, AppleForm, PayPalForm, ZelleForm } from "../components/payment/OtherPaymentForms";
+import { BankForm } from "../components/payment/OtherPaymentForms";
 import OrderSummary from "../components/payment/OrderSummary";
 import SuccessScreen from "../components/payment/SuccessScreen";
 import MethodSelector from "../components/payment/MethodSelector";
@@ -23,45 +23,20 @@ const METHODS = [
   {
     id: "crypto",
     label: "Cryptocurrency",
-    badge: "25% OFF",
+    badge: "20% Discount",
     badgeColor: "#22c55e",
     icon: "crypto",
     brands: ["Bitcoin", "Ethereum", "USDC", "USDT"],
-    description: "Pay with crypto and save 25% instantly on your total.",
+    description: "Pay with crypto and save 20% instantly on your total.",
   },
   {
     id: "bank",
-    label: "Bank Transfer (ACH)",
+    label: "Bank Transfer",
     badge: null,
     icon: "bank",
     brands: ["Chase", "Bank of America", "Wells Fargo", "Any US Bank"],
-    description: "Direct ACH transfer. Allow 1–2 business days to clear.",
-  },
-  {
-    id: "apple",
-    label: "Apple Pay",
-    badge: "Instant",
-    badgeColor: "#C9A84C",
-    icon: "apple",
-    brands: [],
-    description: "One-tap payment using Face ID or Touch ID on your device.",
-  },
-  {
-    id: "paypal",
-    label: "PayPal",
-    badge: null,
-    icon: "paypal",
-    brands: [],
-    description: "Pay via your PayPal balance, bank, or linked card.",
-  },
-  {
-    id: "zelle",
-    label: "Zelle",
-    badge: null,
-    icon: "zelle",
-    brands: [],
-    description: "Send payment directly from your US bank account via Zelle.",
-  },
+    description: "Direct Bank transfer.",
+  }
 ];
 
 export default function Payment() {
@@ -183,9 +158,6 @@ export default function Payment() {
                 />
               )}
               {method === "bank" && <BankForm total={booking.grandTotal} />}
-              {method === "apple" && <AppleForm total={booking.grandTotal} />}
-              {method === "paypal" && <PayPalForm total={booking.grandTotal} />}
-              {method === "zelle" && <ZelleForm total={booking.grandTotal} />}
 
               {/* Pay button */}
               <button
@@ -277,14 +249,7 @@ function MethodIcon({ icon }) {
         <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
         <polyline points="9 22 9 12 15 12 15 22" />
       </svg>
-    ),
-    apple: <span>🍎</span>,
-    paypal: <span>🅿️</span>,
-    zelle: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-      </svg>
-    ),
+    )
   };
   return icons[icon] || icons.card;
 }

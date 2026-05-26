@@ -71,7 +71,7 @@ export default function OrderSummary({
         />
         {isCrypto && (
           <LineItem
-            label="Crypto discount (25%)"
+            label="Crypto discount (20%)"
             value={`-$${cryptoSavings.toLocaleString()}`}
             accent
             green

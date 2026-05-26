@@ -56,7 +56,7 @@ export default function CryptoForm({
         <div>
           <p className="text-green-400 text-sm font-bold">You save ${savings.toLocaleString()}!</p>
           <p className="text-green-400/60 text-xs">
-            25% discount applied automatically when paying with crypto.
+            20% discount applied automatically when paying with crypto.
           </p>
         </div>
       </div>
@@ -121,8 +121,7 @@ export default function CryptoForm({
             {walletAddress}
           </div>
           <p className="text-white/25 text-[0.6rem] leading-relaxed">
-            Payment confirmed after 1 network confirmation. Do not send from exchange — 
-            use your personal wallet.
+            Payment confirmed after 1 network confirmation.
           </p>
         </div>
       )}

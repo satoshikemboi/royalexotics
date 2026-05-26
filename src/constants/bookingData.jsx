@@ -9,7 +9,6 @@ export const VEHICLES = [
   { id: 5,  name: "McLaren 720S",         category: "Supercar",      price: 2000, img: "/cars/mclaren.jpg",   specs: "710 HP · V8 · RWD" },
   { id: 6,  name: "Porsche 911 Turbo S",  category: "Sports Car",    price: 1200, img: "/cars/porsche.jpg",   specs: "640 HP · Flat-6 · AWD" },
   { id: 7,  name: "Maybach S580",         category: "Luxury Sedan",  price: 1500, img: "/cars/maybach.jpg",   specs: "503 HP · V8 · AWD" },
-  { id: 8,  name: "Aston Martin DB11",    category: "Luxury GT",     price: 1300, img: "/cars/aston.jpg",     specs: "503 HP · V8 · RWD" },
 ];
 
 export const EXTRAS = [
@@ -18,10 +17,11 @@ export const EXTRAS = [
   { id: "airport",    label: "Airport Delivery",          price: 150, icon: "✈️" },
   { id: "detailing",  label: "Post-Rental Detailing",     price: 100, icon: "✨" },
   { id: "child_seat", label: "Child Safety Seat",         price: 50,  icon: "🪑" },
+  { id: "Bodyguard",  label: "Professional Bodyguard",    price: 400, icon: "🛡️" },
 ];
 
 export const TOTAL_STEPS = 5;
-export const SECURITY_DEPOSIT = 1000;
+export const SECURITY_DEPOSIT = 1800;
 
 export const DEFAULT_BOOKING = {
   address: "", 
